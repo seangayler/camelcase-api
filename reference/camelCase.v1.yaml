@@ -1,0 +1,247 @@
+openapi: 3.0.0
+info:
+  title: camelCase
+  version: '1.0'
+  contact:
+    name: Sean Gayler
+    email: scianciogayl@student.unimelb.edu.au
+  description: API for camelCase
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  '/profile/{userID}':
+    parameters:
+      - schema:
+          type: number
+        name: userID
+        in: path
+        required: true
+        description: ID of user in profile database table
+    delete:
+      summary: Delete profile
+      tags: []
+      responses: {}
+      operationId: delete-profile-userID
+    put:
+      summary: Update profile information
+      tags: []
+      responses: {}
+      operationId: put-profile-userID
+    get:
+      summary: Retrieve profile information
+      tags: []
+      responses:
+        '200':
+          description: 'The requested profile is public, or it is private and belongs to the authenticated user. Returns extensive profile information.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - firstName
+                      - lastName
+                      - bio
+                      - location
+                      - lookingForWork
+                      - public
+                      - gender
+                      - DOB
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      bio:
+                        type: string
+                      location:
+                        type: string
+                      lookingForWork:
+                        type: boolean
+                      public:
+                        type: boolean
+                      gender:
+                        type: string
+                        enum:
+                          - male
+                          - female
+                          - other
+                      DOB:
+                        type: string
+                        format: date
+                required:
+                  - status
+                  - data
+        '401':
+          description: 'The requested profile is private and does not belong to the authenticated user. Returns only basic information about the profile: first name, last name and whether it is public.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - firstName
+                      - lastName
+                      - public
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      public:
+                        type: boolean
+                required:
+                  - status
+                  - data
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '404':
+          description: Profile not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile not found.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-profile-userID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+          application/xml:
+            schema: {}
+            examples:
+              example-1:
+                value: {}
+        description: ''
+      description: 'GET, PUT or DELETE information based on user id in profile table. User must be authenticated to PUT or DELETE their own profile. User must also be authenticated to GET their own profile if it is set to private.'
+  /profile:
+    post:
+      summary: Add a new user profile.
+      tags: []
+      responses:
+        '200':
+          description: Profile successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '403':
+          description: The user already has a profile created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile already exists.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          headers:
+            header-0:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: post-profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - firstName
+                    - lastName
+                    - public
+                    - lookingForWork
+                    - gender
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    bio:
+                      type: string
+                    location:
+                      type: string
+                    public:
+                      type: boolean
+                    lookingForWork:
+                      type: boolean
+                    gender:
+                      type: string
+                      enum:
+                        - male
+                        - female
+                        - other
+                    DOB:
+                      type: string
+                      format: date
+              required:
+                - data
+      description: Adds a new user profile. User must be authenticated to access endpoint.
+components:
+  schemas: {}
