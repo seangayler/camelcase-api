@@ -176,10 +176,7 @@ paths:
                   - message
         '500':
           description: Internal Server Error
-          headers:
-            header-0:
-              schema:
-                type: string
+          headers: {}
           content:
             application/json:
               schema:
