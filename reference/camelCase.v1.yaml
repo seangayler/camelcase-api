@@ -17,16 +17,6 @@ paths:
         in: path
         required: true
         description: ID of user in profile database table
-    delete:
-      summary: Delete profile
-      tags: []
-      responses: {}
-      operationId: delete-profile-userID
-    put:
-      summary: Update profile information
-      tags: []
-      responses: {}
-      operationId: put-profile-userID
     get:
       summary: Retrieve profile information
       tags: []
@@ -243,5 +233,209 @@ paths:
               required:
                 - data
       description: Adds a new user profile. User must be authenticated to access endpoint.
+    put:
+      summary: ''
+      operationId: put-profile
+      responses:
+        '200':
+          description: Profile successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  userID:
+                    type: string
+                required:
+                  - status
+                  - userID
+        '404':
+          description: Profile does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '422':
+          description: Unprocessable Entity (WebDAV). Something is wrong with the submitted data (fails validation).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: fail
+                  data:
+                    type: array
+                    items:
+                      type: object
+                required:
+                  - status
+                  - data
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  messsage:
+                    type: string
+                required:
+                  - status
+                  - messsage
+      description: Updates an existing user profile. User must be authenticated to access endpoint.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - firstName
+                    - lastName
+                    - public
+                    - lookingForWork
+                    - gender
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    bio:
+                      type: string
+                    location:
+                      type: string
+                    public:
+                      type: boolean
+                    lookingForWork:
+                      type: boolean
+                    gender:
+                      type: string
+                    DOB:
+                      type: string
+              required:
+                - data
+          application/xml:
+            schema: {}
+    delete:
+      summary: ''
+      operationId: delete-profile
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      description: Deletes your profile. You must be authenticated.
+  /profile/getID:
+    get:
+      summary: Get your user ID
+      tags: []
+      responses:
+        '200':
+          description: You are authenticated and have a profile created. Here's your ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  userID:
+                    type: number
+                required:
+                  - status
+                  - userID
+        '404':
+          description: You do not have a profile.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-profile-getID
+      description: Gets your userID when authenticated.
 components:
   schemas: {}
