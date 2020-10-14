@@ -9,7 +9,7 @@ info:
 servers:
   - url: 'http://localhost:5000'
 paths:
-  '/profile/{userID}':
+  'api/profile/{userID}':
     parameters:
       - schema:
           type: number
@@ -22,7 +22,7 @@ paths:
       tags: []
       responses:
         '200':
-          description: 'The requested profile is public, or it is private and belongs to the authenticated user. Returns extensive profile information.'
+          description: The requested profile is public. Retrieves full profile information.
           content:
             application/json:
               schema:
@@ -68,7 +68,7 @@ paths:
                   - status
                   - data
         '401':
-          description: 'The requested profile is private and does not belong to the authenticated user. Returns only basic information about the profile: first name, last name and whether it is public.'
+          description: The requested profile is private. Retrieves limited profile information.
           content:
             application/json:
               schema:
@@ -140,8 +140,8 @@ paths:
               example-1:
                 value: {}
         description: ''
-      description: 'GET, PUT or DELETE information based on user id in profile table. User must be authenticated to PUT or DELETE their own profile. User must also be authenticated to GET their own profile if it is set to private.'
-  /profile:
+      description: 'Get a profile specified by userID route parameter. Use this endpoint if retrieving a profile that does not belong to you, or if you are unauthenticated.'
+  api/profile:
     post:
       summary: Add a new user profile.
       tags: []
@@ -159,7 +159,7 @@ paths:
                 required:
                   - status
         '403':
-          description: The user already has a profile created.
+          description: Profile already exists.
           content:
             application/json:
               schema:
@@ -174,6 +174,40 @@ paths:
                 required:
                   - status
                   - message
+        '422':
+          description: Something is wrong with the submitted data (fails validation).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: fail
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          example: arithmagender
+                        msg:
+                          type: string
+                          example: Invalid value
+                        param:
+                          type: string
+                          example: data.gender
+                        location:
+                          type: string
+                          example: body
+                      required:
+                        - value
+                        - msg
+                        - param
+                        - location
+                required:
+                  - status
         '500':
           description: Internal Server Error
           headers: {}
@@ -229,7 +263,7 @@ paths:
                       format: date
               required:
                 - data
-      description: Adds a new user profile. User must be authenticated to access endpoint.
+      description: Add your profile to the database. You must be authenticated to use this endpoint.
     put:
       summary: ''
       operationId: put-profile
@@ -244,11 +278,8 @@ paths:
                   status:
                     type: string
                     default: success
-                  userID:
-                    type: string
                 required:
                   - status
-                  - userID
         '404':
           description: Profile does not exist.
           content:
@@ -266,7 +297,7 @@ paths:
                   - status
                   - message
         '422':
-          description: Unprocessable Entity (WebDAV). Something is wrong with the submitted data (fails validation).
+          description: Something is wrong with the submitted data (fails validation).
           content:
             application/json:
               schema:
@@ -279,6 +310,24 @@ paths:
                     type: array
                     items:
                       type: object
+                      properties:
+                        value:
+                          type: string
+                          example: arithmagender
+                        msg:
+                          type: string
+                          example: Invalid value
+                        param:
+                          type: string
+                          example: data.gender
+                        location:
+                          type: string
+                          example: body
+                      required:
+                        - value
+                        - msg
+                        - param
+                        - location
                 required:
                   - status
                   - data
@@ -297,7 +346,7 @@ paths:
                 required:
                   - status
                   - messsage
-      description: Updates an existing user profile. User must be authenticated to access endpoint.
+      description: Updates your existing profile. You must be authenticated to use this endpoint.
       requestBody:
         content:
           application/json:
@@ -338,7 +387,7 @@ paths:
       operationId: delete-profile
       responses:
         '200':
-          description: OK
+          description: Profile successfully deleted.
           content:
             application/json:
               schema:
@@ -381,13 +430,14 @@ paths:
                   - status
                   - message
       description: Deletes your profile. You must be authenticated.
-  /profile/getID:
+    parameters: []
+  /api/profile/getOwnProfile:
     get:
-      summary: Get your user ID
+      summary: Get your own profile
       tags: []
       responses:
         '200':
-          description: You are authenticated and have a profile created. Here's your ID.
+          description: Profile information successfully retrieved.
           content:
             application/json:
               schema:
@@ -396,13 +446,37 @@ paths:
                   status:
                     type: string
                     default: success
-                  userID:
-                    type: number
+                  data:
+                    type: object
+                    required:
+                      - firstName
+                      - lastName
+                      - lookingForWork
+                      - public
+                      - gender
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      bio:
+                        type: string
+                      location:
+                        type: string
+                      lookingForWork:
+                        type: boolean
+                      public:
+                        type: boolean
+                      gender:
+                        type: string
+                      DOB:
+                        type: string
+                        format: date
                 required:
                   - status
-                  - userID
+                  - data
         '404':
-          description: You do not have a profile.
+          description: Profile not found.
           content:
             application/json:
               schema:
@@ -413,7 +487,7 @@ paths:
                     default: error
                   message:
                     type: string
-                    default: Profile does not exist.
+                    default: Profile not found.
                 required:
                   - status
                   - message
@@ -432,7 +506,7 @@ paths:
                 required:
                   - status
                   - message
-      operationId: get-profile-getID
-      description: Gets your userID when authenticated.
+      operationId: get-api-profile-getOwnProfile
+      description: Retrieves your own (full) profile information. You must be authenticated to use this endpoint.
 components:
   schemas: {}
