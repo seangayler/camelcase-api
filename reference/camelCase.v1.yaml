@@ -516,7 +516,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Get experiences
+      summary: EXPERIENCES - Get all experiences
       tags: []
       responses:
         '200':
