@@ -508,5 +508,21 @@ paths:
                   - message
       operationId: get-api-profile-getOwnProfile
       description: Retrieves your own (full) profile information. You must be authenticated to use this endpoint.
+  '/api/experience/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+    get:
+      summary: Get experiences
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+      operationId: get-api-experience-userID
 components:
   schemas: {}
