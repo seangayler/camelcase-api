@@ -18,7 +18,7 @@ paths:
         required: true
         description: ID of user in profile database table
     get:
-      summary: Retrieve profile information
+      summary: Get profile information of a user
       tags: []
       responses:
         '200':
@@ -143,7 +143,7 @@ paths:
       description: 'Get a profile specified by userID route parameter. Use this endpoint if retrieving a profile that does not belong to you, or if you are unauthenticated.'
   api/profile:
     post:
-      summary: Add a new user profile.
+      summary: 'Add, update or delete a profile'
       tags: []
       responses:
         '200':
@@ -516,7 +516,7 @@ paths:
         in: path
         required: true
     get:
-      summary: EXPERIENCES - Get all experiences
+      summary: Get all experiences of a user
       tags: []
       responses:
         '200':
