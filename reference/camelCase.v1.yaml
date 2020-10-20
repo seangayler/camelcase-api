@@ -677,13 +677,147 @@ paths:
     delete:
       summary: Delete an experience
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: Experience successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or that experience does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                    enum:
+                      - Profile does not exist.
+                      - The experience you tried to delete does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
       operationId: delete-api-experience
+      description: Deletes an experience. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    experienceID:
+                      type: string
     put:
       summary: Update an experience
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: Experience succesfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile was not found or experience does not exist by that ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The experience you tried to update does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
       operationId: put-api-experience
+      description: Update an existing experience. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - experienceID
+                  properties:
+                    location:
+                      type: string
+                    organisation:
+                      type: string
+                    jobTitle:
+                      type: string
+                    description:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+                    experienceID:
+                      type: string
+              required:
+                - data
+        description: ''
     post:
       summary: Create a new experience
       tags: []
@@ -709,7 +843,7 @@ paths:
                   - status
                   - data
         '404':
-          description: Profile not found. Experience could not be added to a nonexistent profile.
+          description: Profile not found.
           content:
             application/json:
               schema:
