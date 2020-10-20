@@ -1207,8 +1207,29 @@ paths:
                   status:
                     type: string
                     default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The education you tried to update does not exist.
                 required:
                   - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
       operationId: put-api-education
       description: 'Update an education  '
       requestBody:
@@ -1241,7 +1262,82 @@ paths:
     delete:
       summary: Delete an education
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: Education successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or that education you specified does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The education you tried to delete does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
       operationId: delete-api-education
+      description: Delete an education. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - educationID
+                  properties:
+                    educationID:
+                      type: string
+              required:
+                - data
+          application/xml:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - educationID
+                  properties:
+                    educationID:
+                      type: string
+              required:
+                - data
+        description: ''
 components:
   schemas: {}
