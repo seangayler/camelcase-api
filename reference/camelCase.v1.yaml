@@ -702,7 +702,6 @@ paths:
                     default: error
                   message:
                     type: string
-                    default: Profile does not exist.
                     enum:
                       - Profile does not exist.
                       - The experience you tried to delete does not exist.
