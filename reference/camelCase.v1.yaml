@@ -194,12 +194,6 @@ paths:
               properties:
                 data:
                   type: object
-                  required:
-                    - firstName
-                    - lastName
-                    - public
-                    - lookingForWork
-                    - gender
                   properties:
                     firstName:
                       type: string
