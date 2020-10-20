@@ -104,7 +104,7 @@ paths:
       description: 'Get a profile specified by userID route parameter. Use this endpoint if retrieving a profile that does not belong to you, or if you are unauthenticated.'
   api/profile:
     post:
-      summary: 'Add, update or delete a profile'
+      summary: Add your own profile
       tags: []
       responses:
         '200':
@@ -222,11 +222,14 @@ paths:
                     DOB:
                       type: string
                       format: date
+                    publicLocation:
+                      type: boolean
               required:
                 - data
+        description: ''
       description: Add your profile to the database. You must be authenticated to use this endpoint.
     put:
-      summary: ''
+      summary: Update your own profile
       operationId: put-profile
       responses:
         '200':
@@ -339,12 +342,14 @@ paths:
                       type: string
                     DOB:
                       type: string
+                    publicLocation:
+                      type: boolean
               required:
                 - data
           application/xml:
             schema: {}
     delete:
-      summary: ''
+      summary: Delete your own profile
       operationId: delete-profile
       responses:
         '200':
