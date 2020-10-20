@@ -621,7 +621,7 @@ paths:
                             location:
                               type: string
                             experienceID:
-                              type: string
+                              type: integer
                           required:
                             - organisation
                             - jobTitle
@@ -729,7 +729,7 @@ paths:
                   type: object
                   properties:
                     experienceID:
-                      type: string
+                      type: integer
     put:
       summary: Update an experience
       tags: []
@@ -807,7 +807,7 @@ paths:
                       type: string
                       format: date
                     experienceID:
-                      type: string
+                      type: integer
               required:
                 - data
         description: ''
@@ -831,7 +831,7 @@ paths:
                       - experienceID
                     properties:
                       experienceID:
-                        type: string
+                        type: integer
                 required:
                   - status
                   - data
@@ -936,7 +936,7 @@ paths:
                               type: string
                               format: date
                             educationID:
-                              type: string
+                              type: integer
                           required:
                             - institution
                             - qualification
@@ -1110,7 +1110,7 @@ paths:
                       - educationID
                     properties:
                       educationID:
-                        type: string
+                        type: integer
                 required:
                   - status
                   - data
@@ -1250,7 +1250,7 @@ paths:
                       type: string
                       format: date
                     educationID:
-                      type: string
+                      type: integer
                   required:
                     - educationID
     delete:
@@ -1316,7 +1316,7 @@ paths:
                     - educationID
                   properties:
                     educationID:
-                      type: string
+                      type: integer
               required:
                 - data
           application/xml:
