@@ -902,5 +902,198 @@ paths:
                       type: string
               required:
                 - data
+  /api/education/getOwnEducation:
+    get:
+      summary: Get your own education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - education
+                    properties:
+                      education:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            institution:
+                              type: string
+                            qualification:
+                              type: string
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            educationID:
+                              type: string
+                          required:
+                            - institution
+                            - qualification
+                            - description
+                            - location
+                            - startDate
+                            - endDate
+                            - educationID
+                required:
+                  - status
+                  - data
+        '404':
+          description: Profile not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-education-getOwnEducation
+      description: Get your own education. You must be authenticated.
+  '/api/education/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+        description: ID of user.
+    get:
+      summary: Get a profile's education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    required:
+                      - education
+                    type: object
+                    properties:
+                      education:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            institution:
+                              type: string
+                            qualification:
+                              type: string
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            educationID:
+                              type: string
+                          required:
+                            - institution
+                            - qualification
+                            - description
+                            - location
+                            - startDate
+                            - endDate
+                            - educationID
+                required:
+                  - status
+                  - data
+        '401':
+          description: 'Profile is set to private, so you cannot view its education.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: User has profile set to private.
+                required:
+                  - status
+                  - message
+        '404':
+          description: Profile does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-education-userID
+      description: Get the education of a profile specified by userID poth parameter.
 components:
   schemas: {}
