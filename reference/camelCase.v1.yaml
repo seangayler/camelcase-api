@@ -22,7 +22,12 @@ paths:
       tags: []
       responses:
         '200':
-          description: The requested profile is public. Retrieves full profile information.
+          description: |-
+            The user information is successfully returned. The response itself depends on whether the profile is public, and whether the profile's location is public.
+
+            If profile is private: respond with limited profile information (firstName, lastName and public)
+
+            If profile is public: respond with full profile information, omitting location if the profile's location is set to private
           content:
             application/json:
               schema:
@@ -36,12 +41,7 @@ paths:
                     required:
                       - firstName
                       - lastName
-                      - bio
-                      - location
-                      - lookingForWork
                       - public
-                      - gender
-                      - DOB
                     properties:
                       firstName:
                         type: string
@@ -64,39 +64,11 @@ paths:
                       DOB:
                         type: string
                         format: date
-                required:
-                  - status
-                  - data
-        '401':
-          description: The requested profile is private. Retrieves limited profile information.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    default: success
-                  data:
-                    type: object
-                    required:
-                      - firstName
-                      - lastName
-                      - public
-                    properties:
-                      firstName:
-                        type: string
-                      lastName:
-                        type: string
-                      public:
+                      publicLocation:
                         type: boolean
                 required:
                   - status
                   - data
-            application/xml:
-              schema:
-                type: object
-                properties: {}
         '404':
           description: Profile not found.
           content:
@@ -129,17 +101,6 @@ paths:
                   - status
                   - message
       operationId: get-profile-userID
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-          application/xml:
-            schema: {}
-            examples:
-              example-1:
-                value: {}
-        description: ''
       description: 'Get a profile specified by userID route parameter. Use this endpoint if retrieving a profile that does not belong to you, or if you are unauthenticated.'
   api/profile:
     post:
@@ -451,9 +412,13 @@ paths:
                     required:
                       - firstName
                       - lastName
+                      - bio
+                      - location
                       - lookingForWork
                       - public
                       - gender
+                      - DOB
+                      - publicLocation
                     properties:
                       firstName:
                         type: string
@@ -472,6 +437,8 @@ paths:
                       DOB:
                         type: string
                         format: date
+                      publicLocation:
+                        type: boolean
                 required:
                   - status
                   - data
