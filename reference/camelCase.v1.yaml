@@ -1095,5 +1095,153 @@ paths:
                   - message
       operationId: get-api-education-userID
       description: Get the education of a profile specified by userID poth parameter.
+  /api/education:
+    post:
+      summary: Add a new education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully added.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - educationID
+                    properties:
+                      educationID:
+                        type: string
+                required:
+                  - status
+                  - data
+        '404':
+          description: 'Profile was not found, so you cannot add an education.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: post-api-education
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - institution
+                    - startDate
+                  properties:
+                    institution:
+                      type: string
+                    qualification:
+                      type: string
+                    description:
+                      type: string
+                    location:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+              required:
+                - data
+      description: Add a new education. You must be authenticated.
+    put:
+      summary: Update an education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or education you tried to update does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                required:
+                  - status
+      operationId: put-api-education
+      description: 'Update an education  '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    institution:
+                      type: string
+                    qualification:
+                      type: string
+                    description:
+                      type: string
+                    location:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+                    educationID:
+                      type: string
+                  required:
+                    - educationID
+    delete:
+      summary: Delete an education
+      tags: []
+      responses: {}
+      operationId: delete-api-education
 components:
   schemas: {}
