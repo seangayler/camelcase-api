@@ -487,14 +487,184 @@ paths:
         name: userID
         in: path
         required: true
+        description: ID of user
     get:
       summary: Get all experiences of a user
       tags: []
       responses:
         '200':
-          description: OK
-        '201':
-          description: Created
+          description: Successfully retrieved user experiences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    required:
+                      - experiences
+                    type: object
+                    properties:
+                      experiences:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            organisation:
+                              type: string
+                            jobTitle:
+                              type: string
+                            description:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            experienceID:
+                              type: string
+                          required:
+                            - organisation
+                            - jobTitle
+                            - description
+                            - startDate
+                            - endDate
+                            - experienceID
+                required:
+                  - status
+                  - data
+        '401':
+          description: 'User has profile set to private, so you cannot view their experiences.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: User has profile set to private.
+                required:
+                  - status
+                  - message
+        '404':
+          description: 'Profile not found, so you cannot view their experiences.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
       operationId: get-api-experience-userID
+  /api/experiences/getOwnExperiences:
+    get:
+      summary: Get your own experiences
+      tags: []
+      responses:
+        '200':
+          description: Experiences successfully returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - experiences
+                    properties:
+                      experiences:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            organisation:
+                              type: string
+                            jobTitle:
+                              type: string
+                            description:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            experienceID:
+                              type: string
+                          required:
+                            - organisation
+                            - jobTitle
+                            - description
+                            - startDate
+                            - endDate
+                            - experienceID
+                required:
+                  - status
+                  - data
+        '404':
+          description: 'Profile not found, so you cannot get experiences.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Could not find a profile by that ID
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-experiences-getOwnExperiences
+      description: Retrieves your own experiences. You must be authenticated to use this endpoint.
 components:
   schemas: {}
