@@ -14,7 +14,7 @@ paths:
         required: true
         description: The name or subName of the project you want to find
     get:
-      summary: Your GET endpoint
+      summary: search for a project
       tags: []
       responses:
         '200':
@@ -63,7 +63,7 @@ paths:
         description: The name or subName of the user you want to find
         required: true
     get:
-      summary: Your GET endpoint
+      summary: search for a user
       tags: []
       responses:
         '200':
@@ -109,7 +109,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: search for a user or profile
       tags: []
       responses:
         '200':

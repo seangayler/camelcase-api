@@ -7,7 +7,7 @@ servers:
 paths:
   /api/links/:
     get:
-      summary: Your GET endpoint
+      summary: get your own social links
       tags: []
       responses:
         '200':
@@ -50,8 +50,9 @@ paths:
                     type: string
       operationId: get-api-links
       description: Get your own social links
+      parameters: []
     post:
-      summary: ''
+      summary: add a new social link to your account
       operationId: post-api-links
       responses:
         '200':
@@ -98,7 +99,7 @@ paths:
                       type: string
       description: Add a social link to your own profile
     delete:
-      summary: ''
+      summary: delete a social link from your account
       operationId: delete-api-links
       responses:
         '200':
@@ -152,7 +153,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: get someones social links
       tags: []
       responses:
         '200':
