@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  title: Search
+  version: '1.0'
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  '/api/search/project/{searchQuery}':
+    parameters:
+      - schema:
+          type: string
+        name: searchQuery
+        in: path
+        required: true
+        description: The name or subName of the project you want to find
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    project_id:
+                      type: string
+                    project_name:
+                      type: string
+                    auhtor_first_name:
+                      type: string
+                    author_last_name:
+                      type: string
+                  required:
+                    - project_id
+                    - project_name
+                    - auhtor_first_name
+                    - author_last_name
+              examples: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+      operationId: get-api-search-project-searchQuery
+      description: Search for a project
+      parameters: []
+  '/api/search/user/{searchQuery}':
+    parameters:
+      - schema:
+          type: string
+        name: searchQuery
+        in: path
+        description: The name or subName of the user you want to find
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    profile_id:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    profile_picture:
+                      type: string
+                  required:
+                    - profile_id
+                    - first_name
+                    - last_name
+                    - profile_picture
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+      operationId: get-api-search-user-searchQuery
+      description: search for a user
+  '/api/search/{searchQuery}':
+    parameters:
+      - schema:
+          type: string
+        name: searchQuery
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    type:
+                      type: string
+                      enum:
+                        - Project
+                        - Profile
+                  required:
+                    - id
+                    - name
+                    - type
+      operationId: get-api-search-searchQuery
+      description: search for a project or a user
+components:
+  schemas: {}
