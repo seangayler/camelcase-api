@@ -1,0 +1,2093 @@
+openapi: 3.0.0
+info:
+  title: camelCase UPDATED
+  version: '1.0'
+  contact:
+    name: Sean Gayler
+    email: scianciogayl@student.unimelb.edu.au
+  description: API for camelCase
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  'api/profile/{userID}':
+    parameters:
+      - schema:
+          type: number
+        name: userID
+        in: path
+        required: true
+        description: ID of user in profile database table
+    get:
+      summary: Get profile information of a user
+      tags: []
+      responses:
+        '200':
+          description: |-
+            The user information is successfully returned. The response itself depends on whether the profile is public, and whether the profile's location is public.
+
+            If profile is private: respond with limited profile information (firstName, lastName and public)
+
+            If profile is public: respond with full profile information, omitting location if the profile's location is set to private
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - firstName
+                      - lastName
+                      - public
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      bio:
+                        type: string
+                      location:
+                        type: string
+                      lookingForWork:
+                        type: boolean
+                      public:
+                        type: boolean
+                      gender:
+                        type: string
+                        enum:
+                          - male
+                          - female
+                          - other
+                      DOB:
+                        type: string
+                        format: date
+                      publicLocation:
+                        type: boolean
+                required:
+                  - status
+                  - data
+        '404':
+          description: Profile not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile not found.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-profile-userID
+      description: 'Get a profile specified by userID route parameter. Use this endpoint if retrieving a profile that does not belong to you, or if you are unauthenticated.'
+  api/profile:
+    post:
+      summary: Add your own profile
+      tags: []
+      responses:
+        '200':
+          description: Profile successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '403':
+          description: Profile already exists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile already exists.
+                required:
+                  - status
+                  - message
+        '422':
+          description: Something is wrong with the submitted data (fails validation).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: fail
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          example: arithmagender
+                        msg:
+                          type: string
+                          example: Invalid value
+                        param:
+                          type: string
+                          example: data.gender
+                        location:
+                          type: string
+                          example: body
+                      required:
+                        - value
+                        - msg
+                        - param
+                        - location
+                required:
+                  - status
+        '500':
+          description: Internal Server Error
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: post-profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    bio:
+                      type: string
+                    location:
+                      type: string
+                    public:
+                      type: boolean
+                    lookingForWork:
+                      type: boolean
+                    gender:
+                      type: string
+                      enum:
+                        - male
+                        - female
+                        - other
+                    DOB:
+                      type: string
+                      format: date
+                    publicLocation:
+                      type: boolean
+              required:
+                - data
+        description: ''
+      description: Add your profile to the database. You must be authenticated to use this endpoint.
+    put:
+      summary: Update your own profile
+      operationId: put-profile
+      responses:
+        '200':
+          description: Profile successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '422':
+          description: Something is wrong with the submitted data (fails validation).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: fail
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          example: arithmagender
+                        msg:
+                          type: string
+                          example: Invalid value
+                        param:
+                          type: string
+                          example: data.gender
+                        location:
+                          type: string
+                          example: body
+                      required:
+                        - value
+                        - msg
+                        - param
+                        - location
+                required:
+                  - status
+                  - data
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  messsage:
+                    type: string
+                required:
+                  - status
+                  - messsage
+      description: Updates your existing profile. You must be authenticated to use this endpoint.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - firstName
+                    - lastName
+                    - public
+                    - lookingForWork
+                    - gender
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    bio:
+                      type: string
+                    location:
+                      type: string
+                    public:
+                      type: boolean
+                    lookingForWork:
+                      type: boolean
+                    gender:
+                      type: string
+                    DOB:
+                      type: string
+                    publicLocation:
+                      type: boolean
+              required:
+                - data
+          application/xml:
+            schema: {}
+    delete:
+      summary: Delete your own profile
+      operationId: delete-profile
+      responses:
+        '200':
+          description: Profile successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      description: Deletes your profile. You must be authenticated.
+    parameters: []
+  /api/profile/getOwnProfile:
+    get:
+      summary: Get your own profile
+      tags: []
+      responses:
+        '200':
+          description: Profile information successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - firstName
+                      - lastName
+                      - bio
+                      - location
+                      - lookingForWork
+                      - public
+                      - gender
+                      - DOB
+                      - publicLocation
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      bio:
+                        type: string
+                      location:
+                        type: string
+                      lookingForWork:
+                        type: boolean
+                      public:
+                        type: boolean
+                      gender:
+                        type: string
+                      DOB:
+                        type: string
+                        format: date
+                      publicLocation:
+                        type: boolean
+                required:
+                  - status
+                  - data
+        '404':
+          description: Profile not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile not found.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-profile-getOwnProfile
+      description: Retrieves your own (full) profile information. You must be authenticated to use this endpoint.
+  '/api/experience/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+        description: ID of user
+    get:
+      summary: Get all experiences of a user
+      tags: []
+      responses:
+        '200':
+          description: Successfully retrieved user experiences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    required:
+                      - experiences
+                    type: object
+                    properties:
+                      experiences:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            organisation:
+                              type: string
+                            jobTitle:
+                              type: string
+                            description:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            location:
+                              type: string
+                            experienceID:
+                              type: string
+                          required:
+                            - organisation
+                            - jobTitle
+                            - description
+                            - startDate
+                            - endDate
+                            - location
+                            - experienceID
+                required:
+                  - status
+                  - data
+        '401':
+          description: 'User has profile set to private, so you cannot view their experiences.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: User has profile set to private.
+                required:
+                  - status
+                  - message
+        '404':
+          description: 'Profile not found, so you cannot view their experiences.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-experience-userID
+  /api/experience/getOwnExperiences:
+    get:
+      summary: Get your own experiences
+      tags: []
+      responses:
+        '200':
+          description: Experiences successfully returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - experiences
+                    properties:
+                      experiences:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            organisation:
+                              type: string
+                            jobTitle:
+                              type: string
+                            description:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            location:
+                              type: string
+                            experienceID:
+                              type: integer
+                          required:
+                            - organisation
+                            - jobTitle
+                            - description
+                            - startDate
+                            - endDate
+                            - location
+                            - experienceID
+                required:
+                  - status
+                  - data
+        '404':
+          description: 'Profile not found, so you cannot get experiences.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Could not find a profile by that ID
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-experiences-getOwnExperiences
+      description: Retrieves your own experiences. You must be authenticated to use this endpoint.
+    parameters: []
+  /api/experience:
+    delete:
+      summary: Delete an experience
+      tags: []
+      responses:
+        '200':
+          description: Experience successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or that experience does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The experience you tried to delete does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: delete-api-experience
+      description: Deletes an experience. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    experienceID:
+                      type: integer
+    put:
+      summary: Update an experience
+      tags: []
+      responses:
+        '200':
+          description: Experience succesfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile was not found or experience does not exist by that ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The experience you tried to update does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: put-api-experience
+      description: Update an existing experience. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - experienceID
+                  properties:
+                    location:
+                      type: string
+                    organisation:
+                      type: string
+                    jobTitle:
+                      type: string
+                    description:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+                    experienceID:
+                      type: integer
+              required:
+                - data
+        description: ''
+    post:
+      summary: Create a new experience
+      tags: []
+      responses:
+        '200':
+          description: Experience successfully added. The expreienceID is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - experienceID
+                    properties:
+                      experienceID:
+                        type: integer
+                required:
+                  - status
+                  - data
+        '404':
+          description: Profile not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: post-api-experience
+      description: Create a new experience. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - organisation
+                    - startDate
+                  properties:
+                    organisation:
+                      type: string
+                    jobTitle:
+                      type: string
+                    description:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+                    location:
+                      type: string
+              required:
+                - data
+  /api/education/getOwnEducation:
+    get:
+      summary: Get your own education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - education
+                    properties:
+                      education:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            institution:
+                              type: string
+                            qualification:
+                              type: string
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            educationID:
+                              type: integer
+                          required:
+                            - institution
+                            - qualification
+                            - description
+                            - location
+                            - startDate
+                            - endDate
+                            - educationID
+                required:
+                  - status
+                  - data
+        '404':
+          description: Profile not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-education-getOwnEducation
+      description: Get your own education. You must be authenticated.
+  '/api/education/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+        description: ID of user.
+    get:
+      summary: Get a profile's education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    required:
+                      - education
+                    type: object
+                    properties:
+                      education:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            institution:
+                              type: string
+                            qualification:
+                              type: string
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            educationID:
+                              type: string
+                          required:
+                            - institution
+                            - qualification
+                            - description
+                            - location
+                            - startDate
+                            - endDate
+                            - educationID
+                required:
+                  - status
+                  - data
+        '401':
+          description: 'Profile is set to private, so you cannot view its education.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: User has profile set to private.
+                required:
+                  - status
+                  - message
+        '404':
+          description: Profile does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-education-userID
+      description: Get the education of a profile specified by userID poth parameter.
+  /api/education:
+    post:
+      summary: Add a new education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully added.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - educationID
+                    properties:
+                      educationID:
+                        type: integer
+                required:
+                  - status
+                  - data
+        '404':
+          description: 'Profile was not found, so you cannot add an education.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: post-api-education
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - institution
+                    - startDate
+                  properties:
+                    institution:
+                      type: string
+                    qualification:
+                      type: string
+                    description:
+                      type: string
+                    location:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+              required:
+                - data
+      description: Add a new education. You must be authenticated.
+    put:
+      summary: Update an education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or education you tried to update does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The education you tried to update does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: put-api-education
+      description: 'Update an education  '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    institution:
+                      type: string
+                    qualification:
+                      type: string
+                    description:
+                      type: string
+                    location:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+                    educationID:
+                      type: integer
+                  required:
+                    - educationID
+    delete:
+      summary: Delete an education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or that education you specified does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The education you tried to delete does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: delete-api-education
+      description: Delete an education. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - educationID
+                  properties:
+                    educationID:
+                      type: integer
+              required:
+                - data
+          application/xml:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - educationID
+                  properties:
+                    educationID:
+                      type: string
+              required:
+                - data
+        description: ''
+  /api/project/media:
+    post:
+      summary: Add media to user's project
+      tags: []
+      responses:
+        '200':
+          description: Media was successfully added. A signed URL will be sent back to the front end which will be used to make an additional POST request to upload the file on S3.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    properties:
+                      signedRequest:
+                        type: string
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: post-media
+      description: Add media to an owner's project in the database. User must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - fileType
+                    - mediaName
+                    - projectID
+                  properties:
+                    fileType:
+                      type: string
+                    mediaName:
+                      type: string
+                    projectID:
+                      type: string
+              required:
+                - data
+        description: ''
+    put:
+      summary: Update media in user's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: User profile Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: put-media
+      description: Update media from an owner's project. User must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - mediaID
+                    - projectID
+                  properties:
+                    mediaID:
+                      type: string
+                      format: uuid
+                    projectID:
+                      type: number
+                    datePosted:
+                      type: string
+                    mediaName:
+                      type: string
+              required:
+                - data
+    parameters: []
+  '/api/project/media/getOwnMedia/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get all media from an owner's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        datePosted:
+                          type: string
+                        mediaName:
+                          type: string
+                        projectID:
+                          type: number
+                        mediaType:
+                          type: string
+                        mediaID:
+                          type: string
+                          format: uuid
+                        userID:
+                          type: string
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-media-getOwnMedia-projectID
+      description: Get's all media in an owner's project. User must be authenticated.
+  '/api/project/media/{userID}/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get media from a user's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type:
+                      - string
+                      - array
+                    items:
+                      type: object
+                      properties:
+                        datePosted:
+                          type: string
+                        mediaName:
+                          type: string
+                        projectID:
+                          type: number
+                        mediaType:
+                          type: string
+                        mediaID:
+                          type: string
+                          format: uuid
+                        userID:
+                          type: string
+                required:
+                  - status
+                  - data
+        '401':
+          description: User profile is private
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile is private
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: get-media-userID-projectID
+  '/api/project/getOwnProject/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get an owner's project by project ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - data
+                  - status
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-getOwnProject-projectID
+      description: ''
+  '/api/project/{userID}/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get a user's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                required:
+                  - status
+                  - data
+        '401':
+          description: User profile is private
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile is private
+                required:
+                  - status
+                  - message
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: get-userID-projectID
+      description: ''
+  /api/project/getOwnProjects:
+    get:
+      summary: Get all of an owner's projects
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-api-project-getOwnProjects
+  '/api/project/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+    get:
+      summary: Get all of a user's projects
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-api-project-userID
+  /api/project:
+    get:
+      summary: Add a project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: get-api-project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - projectName
+                    - userID
+                    - projectType
+                  properties:
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    location:
+                      type: string
+                    projectName:
+                      type: string
+                    link:
+                      type: string
+                    userID:
+                      type: string
+                    projectType:
+                      type: string
+                      enum:
+                        - website
+                        - app
+                        - code
+                        - academic
+                        - model
+                        - game
+                        - video
+                        - audio
+                        - presentation
+              required:
+                - data
+        description: ''
+    put:
+      summary: Update a project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: put-api-project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - userID
+                    - projectID
+                  properties:
+                    projectName:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    location:
+                      type: string
+                    link:
+                      type: string
+                    projectType:
+                      type: string
+                      enum:
+                        - website
+                        - app
+                        - code
+                        - academic
+                        - model
+                        - game
+                        - video
+                        - audio
+                        - presentation
+                    userID:
+                      type: string
+                    projectID:
+                      type: number
+              required:
+                - data
+    delete:
+      summary: Delete a project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: delete-api-project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - userID
+                    - projectID
+                  properties:
+                    userID:
+                      type: string
+                    projectID:
+                      type: number
+              required:
+                - data
+components:
+  schemas: {}
