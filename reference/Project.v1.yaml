@@ -1,0 +1,769 @@
+openapi: 3.0.0
+info:
+  title: Project
+  version: '1.0'
+  contact:
+    name: Sean Gayler
+    email: scianciogayl@student.unimelb.edu.au
+  description: API for camelCase
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  /api/project/media:
+    post:
+      summary: Add media to user's project
+      tags: []
+      responses:
+        '200':
+          description: Media was successfully added. A signed URL will be sent back to the front end which will be used to make an additional POST request to upload the file on S3.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    properties:
+                      signedRequest:
+                        type: string
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: post-media
+      description: Add media to an owner's project in the database. User must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - fileType
+                    - mediaName
+                    - projectID
+                  properties:
+                    fileType:
+                      type: string
+                    mediaName:
+                      type: string
+                    projectID:
+                      type: string
+              required:
+                - data
+        description: ''
+    put:
+      summary: Update media in user's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: User profile Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: put-media
+      description: Update media from an owner's project. User must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - mediaID
+                    - projectID
+                  properties:
+                    mediaID:
+                      type: string
+                      format: uuid
+                    projectID:
+                      type: number
+                    datePosted:
+                      type: string
+                    mediaName:
+                      type: string
+              required:
+                - data
+    parameters: []
+  '/api/project/media/getOwnMedia/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get all media from an owner's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        datePosted:
+                          type: string
+                        mediaName:
+                          type: string
+                        projectID:
+                          type: number
+                        mediaType:
+                          type: string
+                        mediaID:
+                          type: string
+                          format: uuid
+                        userID:
+                          type: string
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-media-getOwnMedia-projectID
+      description: Get's all media in an owner's project. User must be authenticated.
+  '/api/project/media/{userID}/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get media from a user's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type:
+                      - string
+                      - array
+                    items:
+                      type: object
+                      properties:
+                        datePosted:
+                          type: string
+                        mediaName:
+                          type: string
+                        projectID:
+                          type: number
+                        mediaType:
+                          type: string
+                        mediaID:
+                          type: string
+                          format: uuid
+                        userID:
+                          type: string
+                required:
+                  - status
+                  - data
+        '401':
+          description: User profile is private
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile is private
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: get-media-userID-projectID
+  '/api/project/getOwnProject/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get an owner's project by project ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - data
+                  - status
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-getOwnProject-projectID
+      description: ''
+  '/api/project/{userID}/{projectID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: projectID
+        in: path
+        required: true
+    get:
+      summary: Get a user's project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                required:
+                  - status
+                  - data
+        '401':
+          description: User profile is private
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile is private
+                required:
+                  - status
+                  - message
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: get-userID-projectID
+      description: ''
+  /api/project/getOwnProjects:
+    get:
+      summary: Get all of an owner's projects
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-api-project-getOwnProjects
+  '/api/project/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+    get:
+      summary: Get all of a user's projects
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        projectID:
+                          type: number
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        views:
+                          type: number
+                        datePosted:
+                          type: string
+                        location:
+                          type: string
+                        projectName:
+                          type: string
+                        link:
+                          type: string
+                        userID:
+                          type: string
+                        projectType:
+                          type: string
+                          enum:
+                            - website
+                            - app
+                            - code
+                            - academic
+                            - model
+                            - game
+                            - video
+                            - audio
+                            - presentation
+                required:
+                  - status
+                  - data
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+                required:
+                  - status
+                  - message
+      operationId: get-api-project-userID
+  /api/project:
+    get:
+      summary: Add a project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: get-api-project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - projectName
+                    - userID
+                    - projectType
+                  properties:
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    location:
+                      type: string
+                    projectName:
+                      type: string
+                    link:
+                      type: string
+                    userID:
+                      type: string
+                    projectType:
+                      type: string
+                      enum:
+                        - website
+                        - app
+                        - code
+                        - academic
+                        - model
+                        - game
+                        - video
+                        - audio
+                        - presentation
+              required:
+                - data
+        description: ''
+    put:
+      summary: Update a project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: put-api-project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - userID
+                    - projectID
+                  properties:
+                    projectName:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    location:
+                      type: string
+                    link:
+                      type: string
+                    projectType:
+                      type: string
+                      enum:
+                        - website
+                        - app
+                        - code
+                        - academic
+                        - model
+                        - game
+                        - video
+                        - audio
+                        - presentation
+                    userID:
+                      type: string
+                    projectID:
+                      type: number
+              required:
+                - data
+    delete:
+      summary: Delete a project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+        '404':
+          description: User profile does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist
+      operationId: delete-api-project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - userID
+                    - projectID
+                  properties:
+                    userID:
+                      type: string
+                    projectID:
+                      type: number
+              required:
+                - data
+components:
+  schemas: {}
