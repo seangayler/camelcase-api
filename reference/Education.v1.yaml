@@ -1,0 +1,450 @@
+openapi: 3.0.0
+info:
+  title: Education
+  version: '1.0'
+  contact:
+    name: Sean Gayler
+    email: scianciogayl@student.unimelb.edu.au
+  description: API for camelCase
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  /api/education/getOwnEducation:
+    get:
+      summary: Get your own education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - education
+                    properties:
+                      education:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            institution:
+                              type: string
+                            qualification:
+                              type: string
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            educationID:
+                              type: integer
+                          required:
+                            - institution
+                            - qualification
+                            - description
+                            - location
+                            - startDate
+                            - endDate
+                            - educationID
+                required:
+                  - status
+                  - data
+        '404':
+          description: Profile not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-education-getOwnEducation
+      description: Get your own education. You must be authenticated.
+  '/api/education/{userID}':
+    parameters:
+      - schema:
+          type: string
+        name: userID
+        in: path
+        required: true
+        description: ID of user.
+    get:
+      summary: Get a profile's education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    required:
+                      - education
+                    type: object
+                    properties:
+                      education:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            institution:
+                              type: string
+                            qualification:
+                              type: string
+                            description:
+                              type: string
+                            location:
+                              type: string
+                            startDate:
+                              type: string
+                              format: date
+                            endDate:
+                              type: string
+                              format: date
+                            educationID:
+                              type: string
+                          required:
+                            - institution
+                            - qualification
+                            - description
+                            - location
+                            - startDate
+                            - endDate
+                            - educationID
+                required:
+                  - status
+                  - data
+        '401':
+          description: 'Profile is set to private, so you cannot view its education.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: User has profile set to private.
+                required:
+                  - status
+                  - message
+        '404':
+          description: Profile does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: get-api-education-userID
+      description: Get the education of a profile specified by userID poth parameter.
+  /api/education:
+    post:
+      summary: Add a new education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully added.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                  data:
+                    type: object
+                    required:
+                      - educationID
+                    properties:
+                      educationID:
+                        type: integer
+                required:
+                  - status
+                  - data
+        '404':
+          description: 'Profile was not found, so you cannot add an education.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    default: Profile does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: post-api-education
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - institution
+                    - startDate
+                  properties:
+                    institution:
+                      type: string
+                    qualification:
+                      type: string
+                    description:
+                      type: string
+                    location:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+              required:
+                - data
+      description: Add a new education. You must be authenticated.
+    put:
+      summary: Update an education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or education you tried to update does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The education you tried to update does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: put-api-education
+      description: 'Update an education  '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    institution:
+                      type: string
+                    qualification:
+                      type: string
+                    description:
+                      type: string
+                    location:
+                      type: string
+                    startDate:
+                      type: string
+                      format: date
+                    endDate:
+                      type: string
+                      format: date
+                    educationID:
+                      type: integer
+                  required:
+                    - educationID
+    delete:
+      summary: Delete an education
+      tags: []
+      responses:
+        '200':
+          description: Education successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: success
+                required:
+                  - status
+        '404':
+          description: Profile does not exist or that education you specified does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                    enum:
+                      - Profile does not exist.
+                      - The education you tried to delete does not exist.
+                required:
+                  - status
+                  - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    default: error
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      operationId: delete-api-education
+      description: Delete an education. You must be authenticated.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - educationID
+                  properties:
+                    educationID:
+                      type: integer
+              required:
+                - data
+          application/xml:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - educationID
+                  properties:
+                    educationID:
+                      type: string
+              required:
+                - data
+        description: ''
+components:
+  schemas: {}
